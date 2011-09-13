@@ -5,7 +5,6 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>inc/SpaceTimeBuffer.h</itemPath>
-      <itemPath>inc/SpaceTimeViewer.h</itemPath>
       <itemPath>inc/TemporalFrame.h</itemPath>
       <itemPath>inc/openstip.h</itemPath>
     </logicalFolder>

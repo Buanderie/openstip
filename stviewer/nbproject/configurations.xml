@@ -5,6 +5,7 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>inc/SpaceTimeViewer.h</itemPath>
+      <itemPath>inc/rendering.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -15,6 +16,7 @@
                    projectFiles="true">
       <itemPath>src/SpaceTimeViewer.cpp</itemPath>
       <itemPath>src/main.cpp</itemPath>
+      <itemPath>src/rendering.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -60,6 +62,9 @@
             <linkerLibFileItem>/opt/local/lib/libSDL.dylib</linkerLibFileItem>
             <linkerLibFileItem>/opt/local/lib/libGL.dylib</linkerLibFileItem>
             <linkerLibFileItem>/opt/local/lib/libGLU.dylib</linkerLibFileItem>
+            <linkerLibFileItem>/opt/local/lib/libopencv_core.dylib</linkerLibFileItem>
+            <linkerLibFileItem>/opt/local/lib/libopencv_imgproc.dylib</linkerLibFileItem>
+            <linkerLibFileItem>/opt/local/lib/libopencv_highgui.dylib</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>

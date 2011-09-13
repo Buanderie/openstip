@@ -35,7 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/src/main.o \
-	${OBJECTDIR}/src/SpaceTimeViewer.o
+	${OBJECTDIR}/src/SpaceTimeViewer.o \
+	${OBJECTDIR}/src/rendering.o
 
 
 # C Compiler Flags
@@ -71,6 +72,11 @@ ${OBJECTDIR}/src/SpaceTimeViewer.o: src/SpaceTimeViewer.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/SpaceTimeViewer.o src/SpaceTimeViewer.cpp
+
+${OBJECTDIR}/src/rendering.o: src/rendering.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/rendering.o src/rendering.cpp
 
 # Subprojects
 .build-subprojects:

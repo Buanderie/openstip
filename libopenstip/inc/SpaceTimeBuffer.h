@@ -27,9 +27,16 @@ namespace monadic{
             
             void pushFrame( cv::Mat Frame, float TimeRef );
             
+            int getFrameWidth(){ return _frameWidth; }
+            int getFrameHeight(){ return _frameHeight; }
+            int getLength(){ return _timeLength; }
+            
             cv::Mat getXYSlice( int t );
             cv::Mat getXTSlice( int y );
             cv::Mat getYTSlice( int x );
+            
+            int         getRawDataLength();
+            void        getRawData( float* output );
             
         };
     }

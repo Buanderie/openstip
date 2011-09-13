@@ -35,7 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/src/main.o \
-	${OBJECTDIR}/src/SpaceTimeViewer.o
+	${OBJECTDIR}/src/SpaceTimeViewer.o \
+	${OBJECTDIR}/src/rendering.o
 
 
 # C Compiler Flags
@@ -52,7 +53,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=../libopenstip/dist/Debug/GNU-MacOSX/liblibopenstip.a /opt/local/lib/libSDL.dylib /opt/local/lib/libGL.dylib /opt/local/lib/libGLU.dylib
+LDLIBSOPTIONS=../libopenstip/dist/Debug/GNU-MacOSX/liblibopenstip.a /opt/local/lib/libSDL.dylib /opt/local/lib/libGL.dylib /opt/local/lib/libGLU.dylib /opt/local/lib/libopencv_core.dylib /opt/local/lib/libopencv_imgproc.dylib /opt/local/lib/libopencv_highgui.dylib
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -65,6 +66,12 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer: /opt/local/lib/libSDL.dylib
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer: /opt/local/lib/libGL.dylib
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer: /opt/local/lib/libGLU.dylib
+
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer: /opt/local/lib/libopencv_core.dylib
+
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer: /opt/local/lib/libopencv_imgproc.dylib
+
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer: /opt/local/lib/libopencv_highgui.dylib
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
@@ -79,6 +86,11 @@ ${OBJECTDIR}/src/SpaceTimeViewer.o: src/SpaceTimeViewer.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
 	$(COMPILE.cc) -g -I../libopenstip/inc -I/opt/local/include -Iinc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/SpaceTimeViewer.o src/SpaceTimeViewer.cpp
+
+${OBJECTDIR}/src/rendering.o: src/rendering.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../libopenstip/inc -I/opt/local/include -Iinc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/rendering.o src/rendering.cpp
 
 # Subprojects
 .build-subprojects:

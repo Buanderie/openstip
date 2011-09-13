@@ -90,3 +90,29 @@ cv::Mat STBUFFER::getXYSlice(int t)
     return res;
     
 }
+
+int STBUFFER::getRawDataLength()
+{
+    return _frameWidth * _frameHeight * _timeLength;
+}
+
+void STBUFFER::getRawData(float* output)
+{
+    //For each XY-Slice
+    for( int i = 0; i < _timeLength; ++i )
+    {
+        //Extract new frame from buffer
+        cv::Mat curFrame = this->getXYSlice( i );
+        
+        //For each row in frame
+        for( int j = 0; j < _frameHeight; ++j )
+        {
+            //For each pixel in row
+            for( int k = 0; k < _frameWidth; ++k )
+            {
+                int idx = i*(_frameWidth*_frameHeight) + j*(_frameWidth) + k;
+                output[ idx ] = (((float)(curFrame.at<unsigned char>(j,i)))/255.0f);
+            }
+        }
+    }
+}

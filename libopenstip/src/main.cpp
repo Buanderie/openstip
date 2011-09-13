@@ -44,7 +44,6 @@ int main(int argc, char** argv) {
         
         cap >> frame; // get a new frame from camera
         cv::resize( frame, frameRsz, cv::Size(WIDTH,HEIGHT));
-        
         cvtColor(frameRsz, gray, CV_BGR2GRAY);
         
         stbuff.pushFrame( gray, (float)cpt );
