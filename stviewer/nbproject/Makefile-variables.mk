@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-MacOSX
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-MacOSX
-CND_ARTIFACT_NAME_Debug=openstip
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-MacOSX/openstip
+CND_ARTIFACT_NAME_Debug=stviewer
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-MacOSX/stviewer
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-MacOSX/package
-CND_PACKAGE_NAME_Debug=openstip.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-MacOSX/package/openstip.tar
+CND_PACKAGE_NAME_Debug=stviewer.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-MacOSX/package/stviewer.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-MacOSX
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-MacOSX
-CND_ARTIFACT_NAME_Release=openstip
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-MacOSX/openstip
+CND_ARTIFACT_NAME_Release=stviewer
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-MacOSX/stviewer
 CND_PACKAGE_DIR_Release=dist/Release/GNU-MacOSX/package
-CND_PACKAGE_NAME_Release=openstip.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-MacOSX/package/openstip.tar
+CND_PACKAGE_NAME_Release=stviewer.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-MacOSX/package/stviewer.tar
 #
 # include compiler specific variables
 #

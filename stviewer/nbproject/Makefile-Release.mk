@@ -34,9 +34,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/src/SpaceTimeBuffer.o \
 	${OBJECTDIR}/src/main.o \
-	${OBJECTDIR}/src/TemporalFrame.o
+	${OBJECTDIR}/src/SpaceTimeViewer.o
 
 
 # C Compiler Flags
@@ -57,26 +56,21 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/src/SpaceTimeBuffer.o: src/SpaceTimeBuffer.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/SpaceTimeBuffer.o src/SpaceTimeBuffer.cpp
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/src/main.o: src/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/main.o src/main.cpp
 
-${OBJECTDIR}/src/TemporalFrame.o: src/TemporalFrame.cpp 
+${OBJECTDIR}/src/SpaceTimeViewer.o: src/SpaceTimeViewer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/TemporalFrame.o src/TemporalFrame.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/SpaceTimeViewer.o src/SpaceTimeViewer.cpp
 
 # Subprojects
 .build-subprojects:
@@ -84,7 +78,7 @@ ${OBJECTDIR}/src/TemporalFrame.o: src/TemporalFrame.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stviewer
 
 # Subprojects
 .clean-subprojects:

@@ -57,21 +57,13 @@ LDLIBSOPTIONS=/opt/local/lib/libSDL.dylib /opt/local/lib/libopencv_core.dylib /o
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibopenstip.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip: /opt/local/lib/libSDL.dylib
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip: /opt/local/lib/libopencv_core.dylib
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip: /opt/local/lib/libopencv_highgui.dylib
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip: /opt/local/lib/libopencv_imgproc.dylib
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip: /opt/local/lib/libopencv_video.dylib
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibopenstip.a: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibopenstip.a
+	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibopenstip.a ${OBJECTFILES} 
+	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibopenstip.a
 
 ${OBJECTDIR}/src/SpaceTimeBuffer.o: src/SpaceTimeBuffer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src
@@ -94,7 +86,7 @@ ${OBJECTDIR}/src/TemporalFrame.o: src/TemporalFrame.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/openstip
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibopenstip.a
 
 # Subprojects
 .clean-subprojects:

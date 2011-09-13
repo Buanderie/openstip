@@ -7,9 +7,9 @@ using namespace monadic::openstip;
 #define TFRAME CTemporalFrame
 
 TFRAME::TFRAME( cv::Mat Frame, float TimeRef )
-:_timeRef(TimeRef), _frame(Frame)
+:_timeRef(TimeRef)
 {
-
+    Frame.copyTo( _frame );
 }
 
 TFRAME::~CTemporalFrame()

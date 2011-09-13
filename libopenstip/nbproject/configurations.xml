@@ -7,6 +7,7 @@
       <itemPath>inc/SpaceTimeBuffer.h</itemPath>
       <itemPath>inc/SpaceTimeViewer.h</itemPath>
       <itemPath>inc/TemporalFrame.h</itemPath>
+      <itemPath>inc/openstip.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -36,7 +37,7 @@
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
-    <conf name="Debug" type="1">
+    <conf name="Debug" type="3">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
@@ -48,15 +49,8 @@
             <pElem>./inc</pElem>
           </incDir>
         </ccTool>
-        <linkerTool>
-          <linkerLibItems>
-            <linkerLibFileItem>/opt/local/lib/libSDL.dylib</linkerLibFileItem>
-            <linkerLibFileItem>/opt/local/lib/libopencv_core.dylib</linkerLibFileItem>
-            <linkerLibFileItem>/opt/local/lib/libopencv_highgui.dylib</linkerLibFileItem>
-            <linkerLibFileItem>/opt/local/lib/libopencv_imgproc.dylib</linkerLibFileItem>
-            <linkerLibFileItem>/opt/local/lib/libopencv_video.dylib</linkerLibFileItem>
-          </linkerLibItems>
-        </linkerTool>
+        <archiverTool>
+        </archiverTool>
       </compileType>
     </conf>
     <conf name="Release" type="1">
