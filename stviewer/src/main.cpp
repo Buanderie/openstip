@@ -1,16 +1,16 @@
 //OpenSTIP
 #include <openstip.h>
 
-//Internal
-#include <SpaceTimeViewer.h>
-
 //OpenCV 2.X
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+//Internal
+#include <SpaceTimeViewer.h>
+
 #define WIDTH 320
 #define HEIGHT 240
-#define LENGTH 500
+#define LENGTH 50
 
 using namespace cv;
 using namespace monadic::openstip;
@@ -29,7 +29,7 @@ int main( int argc, char** argv )
     CSpaceTimeViewer stviewer;
     CSpaceTimeBuffer stbuffer( WIDTH, HEIGHT, LENGTH );
     
-    stviewer.init( 640, 480, false );
+    stviewer.init( 640, 480, false, WIDTH, HEIGHT, LENGTH );
     
     float* rawValues = new float[ WIDTH * HEIGHT * LENGTH ];
     
@@ -41,7 +41,10 @@ int main( int argc, char** argv )
         cvtColor(rszFrame, grayFrame, CV_BGR2GRAY);
         stbuffer.pushFrame( grayFrame, (float)cpt );
         
+		stbuffer.getRawData( rawValues );
+
         stviewer.updateData( stbuffer );
+
         stviewer.refresh();
         
         cpt++;

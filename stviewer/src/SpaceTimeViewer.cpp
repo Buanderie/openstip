@@ -1,12 +1,8 @@
-//SDL
-#include <SDL/SDL.h>
-
 //STL
 #include <iostream>
 
-//OpenGL
-#include <gl/gl.h>
-#include <gl/glu.h>
+//GLFW
+#include <GL/GLFW.h>
 
 //Internal
 #include <SpaceTimeViewer.h>
@@ -16,6 +12,23 @@ using namespace monadic::openstip;
 using namespace std;
 
 #define STV CSpaceTimeViewer
+
+void GLFWCALL OnMousePos(int mouseX, int mouseY)  // your callback function called by GLFW when mouse has moved
+{
+    if( !TwEventMousePosGLFW(mouseX, mouseY) )  // send event to AntTweakBar
+    { // event has not been handled by AntTweakBar
+      // your code here to handle the event
+      // ...
+    }
+}
+
+void GLFWCALL OnMouseButton( int button, int action )
+{
+	if( !TwEventMouseButtonGLFW( button, action ) )
+	{
+
+	}
+}
 
 STV::STV()
 {
@@ -27,152 +40,290 @@ STV::~STV()
     
 }
 
-bool STV::init(int windowWidth, int windowHeight, bool fullScreen)
+bool STV::init(int windowWidth, int windowHeight, bool fullScreen, int dataWidth, int dataHeight, int dataLength )
 {
     _winWidth = windowWidth;
     _winHeight = windowHeight;
-    _flags = SDL_OPENGL | SDL_HWPALETTE | SDL_GL_DOUBLEBUFFER | SDL_RESIZABLE | SDL_HWSURFACE;
-    if( fullScreen )
-        _flags ^= SDL_FULLSCREEN;
-    
-    if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-        return false;
+	_dataWidth = dataWidth;
+	_dataHeight = dataHeight;
+	_dataLength = dataLength;
+
+    _frameTime = 0.0f;
+
+
+	_xtSlicePos = dataHeight/2;
+	_ytSlicePos = dataWidth /2;
+	_xySlicePos = dataLength/2;
+
+	// Initialise GLFW
+    if( !glfwInit() )
+    {
+        fprintf( stderr, "Failed to initialize GLFW\n" );
+        exit( EXIT_FAILURE );
     }
- SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,            8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,          8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,           8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,          8);
- 
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,          16);
-    SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,            32);
- 
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE,        8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE,    8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,        8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,    8);
- 
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,  1);
- 
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,  2);
-    
-    if((_surfDisplay = SDL_SetVideoMode(_winWidth, _winHeight, 32, _flags)) == NULL) {
-        return false;
-    }
-    
-    
-    //this->resizeViewport();
-    
-    glClearColor((128.0f / 255.0f), 1.0f, 1.0f, 1.0f); //Cyan color
-    glViewport(0, 0, 640, 480);
+
+	//Open window	 
+	glfwOpenWindow(_winWidth, _winHeight, _mode.RedBits, _mode.GreenBits, _mode.BlueBits, 
+                   0, 30, 0, ((!fullScreen)?(GLFW_WINDOW):(GLFW_FULLSCREEN)));
+
+	glfwEnable(GLFW_MOUSE_CURSOR);
+    glfwEnable(GLFW_KEY_REPEAT);
+
+	//OpenGL and Camera settings
+	//Set color and depth clear value
+    glClearDepth(1.f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.5f);				// Black Background
+	glClearDepth(1.0f);									// Depth Buffer Setup
+	glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
+	glDepthFunc(GL_LEQUAL);								// The Type Of Depth Testing To Do
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
+
+    //Setup a perspective projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, 640, 480, 0, 1, -1);
-    glMatrixMode(GL_MODELVIEW);
-    glEnable(GL_TEXTURE_2D);
-    glLoadIdentity();
-    
-    return true;
+    gluPerspective(45.f, 1.f, 1.f, 1000.f);
+	//
+	cam = new glCamera();
+	cam->m_Position.x=0;
+	cam->m_Position.y = 10;
+	cam->m_Position.z = -10;
+	cam->m_MaxForwardVelocity = 5.0f;
+	cam->m_MaxPitchRate = 5.0f;
+	cam->m_MaxHeadingRate = 5.0f;
+	cam->m_PitchDegrees = 0.0f;
+	cam->m_HeadingDegrees = 0.0f;
+	//
+
+	//AntTweakBar
+	TwInit(TW_OPENGL, NULL);
+	TwWindowSize( _winWidth, _winHeight );
+	_bar = TwNewBar("TweakBar");
+	TwAddVarRW(_bar, "XT Slice Position", TW_TYPE_INT32, &_xtSlicePos, " min=0 max=239 keyIncr=z keyDecr=Z ");
+	TwAddVarRW(_bar, "YT Slice Position", TW_TYPE_INT32, &_ytSlicePos, " min=0 max=319 keyIncr=z keyDecr=Z ");
+	/*
+	glfwSetMouseButtonCallback((GLFWmousebuttonfun)TwEventMouseButtonGLFW);
+  glfwSetMousePosCallback((GLFWmouseposfun)TwEventMousePosGLFW);
+  glfwSetMouseWheelCallback((GLFWmousewheelfun)TwEventMouseWheelGLFW);
+  glfwSetKeyCallback((GLFWkeyfun)TwEventKeyGLFW);
+  glfwSetCharCallback((GLFWcharfun)TwEventCharGLFW);
+  */
+
+  glfwSetMousePosCallback(OnMousePos);
+  glfwSetMouseButtonCallback(OnMouseButton);
+
 }
 
 void STV::processEvents() {
-    
-    SDL_Event event;
-    int handled = 0;
-    
-    // Process incoming events
-    
-    while (SDL_PollEvent(&event)) {
-        
-        // Send event to AntTweakBar
-        //handled = TwEventSDL(&event, SDL_MAJOR_VERSION, SDL_MINOR_VERSION);
-        
-        // If event has not been handled by AntTweakBar, process it
-        if (!handled) {
-            switch (event.type) {
-                case SDL_QUIT: // Window is closed
-                    cout << "quit" << endl;     
-                    exit(0);
-                    break;
 
-                case SDL_VIDEORESIZE: // Window size has changed
-                    // Resize SDL video mode
-                    _winWidth = event.resize.w;
-                    _winHeight = event.resize.h;
-                    if (!SDL_SetVideoMode(_winWidth, _winHeight, 32, _flags))
-                        fprintf(stderr, "WARNING: Video mode set failed: %s\n", SDL_GetError());
-                    
-                    resizeViewport();
-                    cout << "resize" << endl;
-                    
-                    break;
-            }
-        }
-    }
-    
+		//Check for keyboard input
+		if( glfwGetKey( GLFW_KEY_UP ) == GLFW_PRESS )
+			cam->m_ForwardVelocity = 10.0f;
+		if( glfwGetKey( GLFW_KEY_DOWN ) == GLFW_PRESS )
+			cam->m_ForwardVelocity = -10.0f;
+		if( glfwGetKey( GLFW_KEY_DOWN ) == GLFW_RELEASE && glfwGetKey( GLFW_KEY_UP ) == GLFW_RELEASE )
+			cam->m_ForwardVelocity = 0;
+
+		//
+
+		//Check for mouse input
+		if( glfwGetMouseButton( GLFW_MOUSE_BUTTON_RIGHT ) == GLFW_PRESS )
+		{
+			int xpos, ypos;
+			glfwGetMousePos( &xpos, &ypos );
+			cam->ChangeHeading(0.2f*(float)(xpos-((int)_winWidth/2)));
+			cam->ChangePitch(0.2f*(float)(ypos-((int)_winHeight/2)));
+			glfwSetMousePos( _winWidth/2, _winHeight/2 );
+		}
+		//
 }
 
 void STV::resizeViewport() {
-    /* Height / width ration */
-    GLfloat ratio;
 
-    ratio = ( GLfloat )_winWidth / ( GLfloat )_winHeight;
+}
 
-    /* Setup our viewport. */
-    glViewport( 0, 0, ( GLsizei )_winWidth, ( GLsizei )_winHeight );
+void STV::drawXTSlice()
+{
+	glDisable (GL_BLEND);
+	glEnable(GL_TEXTURE_2D);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glBindTexture(GL_TEXTURE_2D, _xtTexture);
+	glBegin(GL_QUADS);
+	glColor4f(1.0f,0.5f,1.0f,100.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3d(0, _dataHeight-_xtSlicePos, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3d(_dataWidth, _dataHeight-_xtSlicePos, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3d(_dataWidth, _dataHeight-_xtSlicePos, _dataLength);
+	glTexCoord2f(0.0f, 1.0f); glVertex3d(0, _dataHeight-_xtSlicePos, _dataLength);
+	glEnd();
+	glEnable (GL_BLEND);
+	glDisable( GL_TEXTURE_2D );
+}
 
-    /* change to the projection matrix and set our viewing volume. */
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity( );
+void STV::drawYTSlice()
+{
+	glDisable (GL_BLEND);
+	glEnable(GL_TEXTURE_2D);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glBindTexture(GL_TEXTURE_2D, _ytTexture);
+	glBegin(GL_QUADS);
+	glColor4f(1.0f,1.0f,1.0f,100.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3d( _ytSlicePos,0, 0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3d( _ytSlicePos,_dataHeight, 0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3d( _ytSlicePos,_dataHeight, _dataLength);
+	glTexCoord2f(0.0f, 1.0f); glVertex3d( _ytSlicePos,0, _dataLength);
+	glEnd();
+	glEnable (GL_BLEND);
+	glDisable( GL_TEXTURE_2D );
+}
 
-    /* Set our perspective */
-    gluPerspective( 45.0f, ratio, 0.1f, 100.0f );
+void STV::drawXYSlice()
+{
+	glDisable (GL_BLEND);
+	glEnable(GL_TEXTURE_2D);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glBindTexture(GL_TEXTURE_2D, _xyTexture);
+	glBegin(GL_QUADS);
+	glColor4f(1.0f,1.0f,1.0f,100.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3d(0, 0,						_xySlicePos);
+	glTexCoord2f(1.0f, 0.0f); glVertex3d( _dataWidth, 0,			_xySlicePos);
+	glTexCoord2f(1.0f, 1.0f); glVertex3d( _dataWidth, _dataHeight,	_xySlicePos);
+	glTexCoord2f(0.0f, 1.0f); glVertex3d( 0, _dataHeight,			_xySlicePos);
+	
 
-    /* Make sure we're chaning the model view and not the projection */
-    glMatrixMode( GL_MODELVIEW );
-
-    /* Reset The View */
-    glLoadIdentity( );
+	glEnd();
+	glEnable (GL_BLEND);
+	glDisable( GL_TEXTURE_2D );
 }
 
 void STV::processDrawing()
 {
-        /* Clear The Screen And The Depth Buffer */
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	 // Clear frame buffer using bgColor
+        glClearColor(0,0,0, 1);
+        glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 
-    /* Move Left 1.5 Units And Into The Screen 6.0 */
-    glLoadIdentity();
-    glTranslatef( -1.5f, 0.0f, -6.0f );
+		//Do stuff
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		cam->SetPrespective();
+		//
 
-    glBegin( GL_TRIANGLES );            /* Drawing Using Triangles */
-      glVertex3f(  0.0f,  1.0f, 0.0f ); /* Top */
-      glVertex3f( -1.0f, -1.0f, 0.0f ); /* Bottom Left */
-      glVertex3f(  1.0f, -1.0f, 0.0f ); /* Bottom Right */
-    glEnd( );                           /* Finished Drawing The Triangle */
+		
+		drawFloorGrid();
 
-    /* Move Right 3 Units */
-    glTranslatef( 3.0f, 0.0f, 0.0f );
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
 
-    glBegin( GL_QUADS );                /* Draw A Quad */
-      glVertex3f( -1.0f,  1.0f, 0.0f ); /* Top Left */
-      glVertex3f(  1.0f,  1.0f, 0.0f ); /* Top Right */
-      glVertex3f(  1.0f, -1.0f, 0.0f ); /* Bottom Right */
-      glVertex3f( -1.0f, -1.0f, 0.0f ); /* Bottom Left */
-    glEnd( );                           /* Done Drawing The Quad */
+		glPushMatrix();
+		glScalef( 1.0f, 1.0f, 10.0f );
+		drawXTSlice();
+		drawYTSlice();
+		drawXYSlice();
+		glPopMatrix();
 
-    /* Draw it to the screen */
-    SDL_GL_SwapBuffers( );
-    cout << "draw.." << endl;
+		TwDraw();  // draw the tweak bar(s)
+
+		// Present frame buffer
+        glfwSwapBuffers();
+
+		unloadSlices();
 }
 
 bool STV::refresh()
 {
+	float startTime = glfwGetTime();
     processDrawing();
     processEvents();
+	_frameTime = glfwGetTime() - startTime;
+	cout << "FPS=" << 1.0f/_frameTime << endl;
+	return true;
+}
+
+void STV::loadSlices( CSpaceTimeBuffer& stbuffer )
+{
+	cv::Mat xtslice = stbuffer.getXTSlice( _xtSlicePos );
+	cv::Mat ytslice = stbuffer.getYTSlice( _ytSlicePos );
+	cv::Mat xyslice = stbuffer.getXYSlice( _xySlicePos );
+	int height, width;
+
+	//XT
+	width = xtslice.cols;// = stbuffer.getFrameWidth();
+	height = xtslice.rows;// = stbuffer.getFrameHeight();
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures( 1, &_xtTexture );
+    glBindTexture( GL_TEXTURE_2D, _xtTexture );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
+                   GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+                   GL_LINEAR);
+    glTexImage2D(	GL_TEXTURE_2D,
+					0,
+					GL_RGB,
+					width,
+					height,
+                    0,
+					GL_LUMINANCE,
+					GL_UNSIGNED_BYTE,
+					xtslice.data );
+	//
+
+	//YT
+	width = ytslice.cols;// = stbuffer.getFrameWidth();
+	height = ytslice.rows;// = stbuffer.getFrameHeight();
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures( 1, &_ytTexture );
+    glBindTexture( GL_TEXTURE_2D, _ytTexture );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
+                   GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+                   GL_LINEAR);
+    glTexImage2D(	GL_TEXTURE_2D,
+					0,
+					GL_RGB,
+					width,
+					height,
+                    0,
+					GL_LUMINANCE,
+					GL_UNSIGNED_BYTE,
+					ytslice.data );
+	//
+
+	//XY
+	width = xyslice.cols;// = stbuffer.getFrameWidth();
+	height = xyslice.rows;// = stbuffer.getFrameHeight();
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures( 1, &_xyTexture );
+    glBindTexture( GL_TEXTURE_2D, _xyTexture );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
+                   GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+                   GL_LINEAR);
+    glTexImage2D(	GL_TEXTURE_2D,
+					0,
+					GL_RGB,
+					width,
+					height,
+                    0,
+					GL_LUMINANCE,
+					GL_UNSIGNED_BYTE,
+					xyslice.data );
+	//
+}
+
+void STV::unloadSlices()
+{
+	glDeleteTextures( 1, &_xtTexture );
+	glDeleteTextures( 1, &_ytTexture );
+	glDeleteTextures( 1, &_xyTexture );
 }
 
 bool STV::updateData(monadic::openstip::CSpaceTimeBuffer& stbuffer)
 {
+	loadSlices( stbuffer );
     return true;
 }
 

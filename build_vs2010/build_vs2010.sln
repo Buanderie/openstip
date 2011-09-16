@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stviewer", "..\stviewer\stviewer.vcxproj", "{2C79C3B8-FD46-45CA-A262-D9E2F1EDB0A5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B73F0389-2A27-44ED-8103-77DFBFD5250F} = {B73F0389-2A27-44ED-8103-77DFBFD5250F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libopenstip", "..\libopenstip\libopenstip.vcxproj", "{B73F0389-2A27-44ED-8103-77DFBFD5250F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C79C3B8-FD46-45CA-A262-D9E2F1EDB0A5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2C79C3B8-FD46-45CA-A262-D9E2F1EDB0A5}.Debug|Win32.Build.0 = Debug|Win32
+		{2C79C3B8-FD46-45CA-A262-D9E2F1EDB0A5}.Debug|x64.ActiveCfg = Debug|Win32
+		{2C79C3B8-FD46-45CA-A262-D9E2F1EDB0A5}.Release|Win32.ActiveCfg = Release|Win32
+		{2C79C3B8-FD46-45CA-A262-D9E2F1EDB0A5}.Release|Win32.Build.0 = Release|Win32
+		{2C79C3B8-FD46-45CA-A262-D9E2F1EDB0A5}.Release|x64.ActiveCfg = Release|Win32
+		{B73F0389-2A27-44ED-8103-77DFBFD5250F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B73F0389-2A27-44ED-8103-77DFBFD5250F}.Debug|Win32.Build.0 = Debug|Win32
+		{B73F0389-2A27-44ED-8103-77DFBFD5250F}.Debug|x64.ActiveCfg = Debug|Win32
+		{B73F0389-2A27-44ED-8103-77DFBFD5250F}.Release|Win32.ActiveCfg = Release|Win32
+		{B73F0389-2A27-44ED-8103-77DFBFD5250F}.Release|Win32.Build.0 = Release|Win32
+		{B73F0389-2A27-44ED-8103-77DFBFD5250F}.Release|x64.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

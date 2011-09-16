@@ -1,6 +1,6 @@
 #include "rendering.h"
 
-#include <gl/gl.h>
+#include <gl/GLFW.h>
 
 void drawFloorGrid()
 {
