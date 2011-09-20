@@ -20,7 +20,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CLRSupport>true</CLRSupport>
+    <CLRSupport>false</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -52,6 +52,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>C:\OpenCV2.2\include;./inc</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -79,12 +80,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\CPUSTIPDetector.h" />
     <ClInclude Include="inc\ISTIPDetector.h" />
     <ClInclude Include="inc\openstip.h" />
     <ClInclude Include="inc\SpaceTimeBuffer.h" />
     <ClInclude Include="inc\TemporalFrame.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CPUSTIPDetector.cpp" />
     <ClCompile Include="src\SpaceTimeBuffer.cpp" />
     <ClCompile Include="src\TemporalFrame.cpp" />
   </ItemGroup>

@@ -96,8 +96,9 @@ int STBUFFER::getRawDataLength()
 void STBUFFER::getRawData(float* output)
 {
     //For each XY-Slice
-    for( int i = 0; i < _timeLength; ++i )
+    for( int k = 0; k < _timeLength; ++k )
     {
+		/*
         //Extract new frame from buffer
 		cv::Mat curFrame = this->getXYSlice( i );
 
@@ -105,7 +106,34 @@ void STBUFFER::getRawData(float* output)
 		cv::Mat fltFrame( _frameHeight, _frameWidth, CV_32F );
 		
 		curFrame.convertTo( fltFrame, CV_32F, 1.0/255.0);
+		*/
 
-		memcpy( output + i, fltFrame.data, _frameWidth*_frameHeight*sizeof(float) );
+		int idx = k*(_frameWidth*_frameHeight);
+		cv::Mat fltFrame = _timeLine[ k ].getFloatFrame();
+		memcpy( output + idx, fltFrame.data, _frameWidth*_frameHeight*sizeof(float) );
+
+		/*
+		for( int i = 0; i < _frameHeight; ++i )
+		{
+			for( int j = 0; j < _frameWidth; ++j )
+			{
+				output[ k * _frameWidth*_frameHeight + i*_frameWidth + j ] = fltFrame.at<float>(i,j);
+			}
+		}
+		
+		vector<float> myVec;
+		myVec.resize( _frameWidth*_frameHeight );
+		fltFrame.copyTo<float>( myVec );
+		*/
     }
+}
+
+void STBUFFER::computeIntegralVolume()
+{
+	
+	for( int i = 0; i < _timeLength; ++i )
+	{
+		cv::Mat integralSlice = cv::Mat::zeros( _frameHeight+1, _frameWidth+1, CV_32F );
+		integral( _timeLine[i].getFloatFrame(), integralSlice, CV_32F );
+	}
 }

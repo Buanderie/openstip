@@ -1,18 +1,25 @@
 //OpenSTIP
 #include <openstip.h>
 
+//STL
+#include <iostream>
+
 //OpenCV 2.X
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+//Boost
+#include <boost/timer.hpp>
+
 //Internal
 #include <SpaceTimeViewer.h>
 
-#define WIDTH 320
-#define HEIGHT 240
-#define LENGTH 50
+#define WIDTH 160
+#define HEIGHT 120
+#define LENGTH 100
 
 using namespace cv;
+using namespace std;
 using namespace monadic::openstip;
 
 int main( int argc, char** argv )
@@ -28,7 +35,10 @@ int main( int argc, char** argv )
     
     CSpaceTimeViewer stviewer;
     CSpaceTimeBuffer stbuffer( WIDTH, HEIGHT, LENGTH );
-    
+    CCPUSTIPDetector* detector = new CCPUSTIPDetector();
+
+
+
     stviewer.init( 640, 480, false, WIDTH, HEIGHT, LENGTH );
     
     float* rawValues = new float[ WIDTH * HEIGHT * LENGTH ];
@@ -36,18 +46,17 @@ int main( int argc, char** argv )
     int cpt = 0;
     for(;;)
     {
+		boost::timer t;
         cap >> rawFrame; // get a new frame from camera
         cv::resize( rawFrame, rszFrame, cv::Size(WIDTH,HEIGHT));
         cvtColor(rszFrame, grayFrame, CV_BGR2GRAY);
         stbuffer.pushFrame( grayFrame, (float)cpt );
-        
-		stbuffer.getRawData( rawValues );
-
         stviewer.updateData( stbuffer );
-
+		detector->computeIntegralVolume( stbuffer );
         stviewer.refresh();
-        
         cpt++;
+		double framet = t.elapsed();
+		cout << "FPS=" << 1.0/framet << endl;
     }
     return 0;
 }

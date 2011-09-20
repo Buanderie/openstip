@@ -12,12 +12,14 @@ namespace monadic
         private:
             float       _timeRef; //Time reference in msec
             cv::Mat     _frame;
+			cv::Mat		_fltFrame;
             
         public:
             CTemporalFrame( cv::Mat Frame, float TimeRef );
             ~CTemporalFrame();
             
             cv::Mat&    getFrame();
+			cv::Mat&	getFloatFrame();
             float       getTimeReference();
         };
     }

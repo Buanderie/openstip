@@ -10,6 +10,8 @@
 
 #include "SpaceTimeBuffer.h"
 #include "TemporalFrame.h"
+#include "ISTIPDetector.h"
+#include "CPUSTIPDetector.h"
 
 #endif	/* OPENSTIP_H */
 

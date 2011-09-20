@@ -27,12 +27,18 @@
     <ClInclude Include="inc\ISTIPDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\CPUSTIPDetector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SpaceTimeBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\TemporalFrame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CPUSTIPDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

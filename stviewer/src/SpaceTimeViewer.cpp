@@ -30,6 +30,31 @@ void GLFWCALL OnMouseButton( int button, int action )
 	}
 }
 
+
+void GLFWCALL OnKey( int key, int action )
+{
+	if( !TwEventKeyGLFW( key, action ))
+	{
+
+	}
+}
+
+void GLFWCALL OnMouseWheel( int pos )
+{
+	if( !TwEventMouseWheelGLFW( pos ))
+	{
+
+	}
+}
+
+void GLFWCALL OnChar( int character, int action )
+{
+	if( !TwEventCharGLFW( character, action ))
+	{
+
+	}
+}
+
 STV::STV()
 {
     
@@ -54,6 +79,7 @@ bool STV::init(int windowWidth, int windowHeight, bool fullScreen, int dataWidth
 	_xtSlicePos = dataHeight/2;
 	_ytSlicePos = dataWidth /2;
 	_xySlicePos = dataLength/2;
+	_timeScale  = 5.0f;
 
 	// Initialise GLFW
     if( !glfwInit() )
@@ -98,23 +124,21 @@ bool STV::init(int windowWidth, int windowHeight, bool fullScreen, int dataWidth
 	TwInit(TW_OPENGL, NULL);
 	TwWindowSize( _winWidth, _winHeight );
 	_bar = TwNewBar("TweakBar");
-	TwAddVarRW(_bar, "XT Slice Position", TW_TYPE_INT32, &_xtSlicePos, " min=0 max=239 keyIncr=z keyDecr=Z ");
-	TwAddVarRW(_bar, "YT Slice Position", TW_TYPE_INT32, &_ytSlicePos, " min=0 max=319 keyIncr=z keyDecr=Z ");
-	/*
-	glfwSetMouseButtonCallback((GLFWmousebuttonfun)TwEventMouseButtonGLFW);
-  glfwSetMousePosCallback((GLFWmouseposfun)TwEventMousePosGLFW);
-  glfwSetMouseWheelCallback((GLFWmousewheelfun)TwEventMouseWheelGLFW);
-  glfwSetKeyCallback((GLFWkeyfun)TwEventKeyGLFW);
-  glfwSetCharCallback((GLFWcharfun)TwEventCharGLFW);
-  */
+	TwAddVarRW(_bar, "XT Slice Position", TW_TYPE_INT32, &_xtSlicePos, " min=0 max=119");
+	TwAddVarRW(_bar, "YT Slice Position", TW_TYPE_INT32, &_ytSlicePos, " min=0 max=159");
+	TwAddVarRW(_bar, "XY Slice Position", TW_TYPE_INT32, &_xySlicePos, " min=0 max=39");
+	TwAddVarRW(_bar, "Time Scale", TW_TYPE_FLOAT, &_timeScale, " min=1 max=10 step=0.1 ");
 
-  glfwSetMousePosCallback(OnMousePos);
-  glfwSetMouseButtonCallback(OnMouseButton);
-
+	glfwSetMousePosCallback(OnMousePos);
+	glfwSetMouseButtonCallback(OnMouseButton);
+	glfwSetKeyCallback(OnKey);
+	glfwSetCharCallback(OnChar);
+	glfwSetMouseWheelCallback(OnMouseWheel);
 }
 
 void STV::processEvents() {
 
+		//Move to the callback ?
 		//Check for keyboard input
 		if( glfwGetKey( GLFW_KEY_UP ) == GLFW_PRESS )
 			cam->m_ForwardVelocity = 10.0f;
@@ -122,7 +146,6 @@ void STV::processEvents() {
 			cam->m_ForwardVelocity = -10.0f;
 		if( glfwGetKey( GLFW_KEY_DOWN ) == GLFW_RELEASE && glfwGetKey( GLFW_KEY_UP ) == GLFW_RELEASE )
 			cam->m_ForwardVelocity = 0;
-
 		//
 
 		//Check for mouse input
@@ -143,24 +166,24 @@ void STV::resizeViewport() {
 
 void STV::drawXTSlice()
 {
-	glDisable (GL_BLEND);
+	glDisable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glBindTexture(GL_TEXTURE_2D, _xtTexture);
 	glBegin(GL_QUADS);
-	glColor4f(1.0f,0.5f,1.0f,100.0f);
+	glColor4f(1.0f,0.5f,1.0f,0.1f);
 	glTexCoord2f(0.0f, 0.0f); glVertex3d(0, _dataHeight-_xtSlicePos, 0);
 	glTexCoord2f(1.0f, 0.0f); glVertex3d(_dataWidth, _dataHeight-_xtSlicePos, 0);
 	glTexCoord2f(1.0f, 1.0f); glVertex3d(_dataWidth, _dataHeight-_xtSlicePos, _dataLength);
 	glTexCoord2f(0.0f, 1.0f); glVertex3d(0, _dataHeight-_xtSlicePos, _dataLength);
 	glEnd();
-	glEnable (GL_BLEND);
+
 	glDisable( GL_TEXTURE_2D );
 }
 
 void STV::drawYTSlice()
 {
-	glDisable (GL_BLEND);
+	glDisable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glBindTexture(GL_TEXTURE_2D, _ytTexture);
@@ -171,13 +194,12 @@ void STV::drawYTSlice()
 	glTexCoord2f(1.0f, 1.0f); glVertex3d( _ytSlicePos,_dataHeight, _dataLength);
 	glTexCoord2f(0.0f, 1.0f); glVertex3d( _ytSlicePos,0, _dataLength);
 	glEnd();
-	glEnable (GL_BLEND);
 	glDisable( GL_TEXTURE_2D );
 }
 
 void STV::drawXYSlice()
 {
-	glDisable (GL_BLEND);
+	glDisable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glBindTexture(GL_TEXTURE_2D, _xyTexture);
@@ -187,17 +209,15 @@ void STV::drawXYSlice()
 	glTexCoord2f(1.0f, 0.0f); glVertex3d( _dataWidth, 0,			_xySlicePos);
 	glTexCoord2f(1.0f, 1.0f); glVertex3d( _dataWidth, _dataHeight,	_xySlicePos);
 	glTexCoord2f(0.0f, 1.0f); glVertex3d( 0, _dataHeight,			_xySlicePos);
-	
-
 	glEnd();
-	glEnable (GL_BLEND);
+
 	glDisable( GL_TEXTURE_2D );
 }
 
 void STV::processDrawing()
 {
 	 // Clear frame buffer using bgColor
-        glClearColor(0,0,0, 1);
+        glClearColor(0.5,0.5,0.5, 1);
         glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 
 		//Do stuff
@@ -206,14 +226,13 @@ void STV::processDrawing()
 		cam->SetPrespective();
 		//
 
-		
-		drawFloorGrid();
+		//drawFloorGrid();
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 
 		glPushMatrix();
-		glScalef( 1.0f, 1.0f, 10.0f );
+		glScalef( 1.0f, 1.0f, _timeScale );
 		drawXTSlice();
 		drawYTSlice();
 		drawXYSlice();
@@ -233,7 +252,7 @@ bool STV::refresh()
     processDrawing();
     processEvents();
 	_frameTime = glfwGetTime() - startTime;
-	cout << "FPS=" << 1.0f/_frameTime << endl;
+	//cout << "FPS=" << 1.0f/_frameTime << endl;
 	return true;
 }
 

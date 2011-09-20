@@ -32,6 +32,7 @@ private:
 	int					_xtSlicePos;
 	int					_ytSlicePos;
 	int					_xySlicePos;
+	float				_timeScale;
 
     GLFWvidmode			_mode;
 	glCamera*			cam;

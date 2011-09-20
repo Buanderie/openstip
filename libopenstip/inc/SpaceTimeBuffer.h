@@ -37,6 +37,7 @@ namespace monadic{
             
             int         getRawDataLength();
             void        getRawData( float* output );
+			void		computeIntegralVolume();
             
         };
     }
